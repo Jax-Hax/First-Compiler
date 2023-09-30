@@ -5,19 +5,39 @@ pub enum Token {
     Fn,
     Identifier(String),
     Number(f32),
+    Other(char)
 }
 pub fn get_tok(input_file: &mut Chars) -> Token {
     let mut last_char: char = ' ';
     let mut identifier_str: String = "".to_string();
-    while last_char == ' ' {
-        last_char = input_file.next().unwrap(); // handle the unwrap
+    while last_char == ' ' || last_char == '\n' || last_char == '\r' {
+        match input_file.next() {
+            Some(char) => last_char = char,
+            None => return Token::Eof,
+        }
     }
     if last_char.is_alphabetic() {
         identifier_str.push(last_char);
-        last_char = input_file.next().unwrap();
+        match input_file.next() {
+            Some(char) => last_char = char,
+            None => {
+                if identifier_str == "fn" {
+                    return Token::Fn;
+                }
+                return Token::Identifier(identifier_str);
+            }
+        }
         while last_char.is_alphanumeric() {
             identifier_str.push(last_char);
-            last_char = input_file.next().unwrap();
+            match input_file.next() {
+                Some(char) => last_char = char,
+                None => {
+                    if identifier_str == "fn" {
+                        return Token::Fn;
+                    }
+                    return Token::Identifier(identifier_str);
+                }
+            }
         }
         if identifier_str == "fn" {
             return Token::Fn;
@@ -28,8 +48,8 @@ pub fn get_tok(input_file: &mut Chars) -> Token {
         let mut num_str: String = "".to_string();
         loop {
             num_str.push(last_char);
-            last_char = input_file.next().unwrap(); //handle unwrap
-            if last_char.is_numeric() || last_char == '.' {
+            last_char = input_file.next().unwrap();
+            if !last_char.is_numeric() && !(last_char == '.') {
                 break;
             }
         }
@@ -48,5 +68,5 @@ pub fn get_tok(input_file: &mut Chars) -> Token {
             }
         }
     }
-    Token::Eof
+    return Token::Other(last_char)
 }
