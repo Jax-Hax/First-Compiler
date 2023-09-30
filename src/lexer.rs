@@ -1,5 +1,5 @@
 use std::str::Chars;
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Token {
     Eof,
     Fn,
