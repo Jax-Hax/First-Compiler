@@ -34,16 +34,23 @@ fn parse_expr() {
 
 }
 fn parse_identifier_expr(identifier: String, tokens: &mut IntoIter<Token>) -> Node{ //called when the current token is an identifier token
-    let token = tokens.next().unwrap(); //eat identifier
+    let mut token = tokens.next().unwrap(); //eat identifier
     match token {
         Token::Other(char) => if char != '(' {
             return Node::Variable(identifier)
         }
         _ => {}
     }
-    if token != '(' {
-        return Node::Variable(token)
+    token = tokens.next().unwrap(); //eat (
+    let args = vec![];
+    match token {
+        Token::Other(char) => if char != ')' {
+            loop {
+                if 
+            }
+        }
     }
+    Node::FunctionCall { name: identifier, args: () }
 }
 enum NodeReturn{
     Node(Node),
