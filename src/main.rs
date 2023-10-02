@@ -16,5 +16,8 @@ fn main() {
       break;
     }
   }
-  construct_tree(tokens.into_iter());
+  let nodes = construct_tree(tokens.into_iter());
+  for node in nodes {
+    println!("{:#?}", node);
+  }
 }

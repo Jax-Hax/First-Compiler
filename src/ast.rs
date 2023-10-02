@@ -33,7 +33,7 @@ impl AST {
 }
 pub fn construct_tree(mut tokens: IntoIter<Token>) -> Vec<Node> {
   let mut ast = AST::new(tokens);
-  let nodes = vec![];
+  let mut nodes = vec![];
   loop {
     let node = ast.parse_tok();
     ast.next_tok();
@@ -86,11 +86,7 @@ fn parse_identifier_expr(identifier: String, tokens: &mut IntoIter<Token>) -> No
     }
     Node::FunctionCall { name: identifier, args: () }
 }*/
-enum NodeReturn{
-    Node(Node),
-    Eof,
-    Nothing,
-}
+#[derive(Debug)]
 pub enum Node {
     Val(f32),
     Eof,
@@ -113,6 +109,7 @@ pub enum Node {
     },
     Variable(String),
 }
+#[derive(Debug)]
 pub struct FunctionParams {
     pub name: String,
     pub args: Vec<String>,
