@@ -17,75 +17,42 @@ impl AST {
     let token = self.tokens.next().unwrap();
     self.cur_token = token;
   }
-  fn parse_tok(&mut self) -> Node {
-    match self.cur_token{
+  fn parse_identifier(&mut self, identifier: String) -> Node {
+    self.next_tok();
+    if let Token::Other('(') = self.cur_token {
+      return Node::Variable(identifier);
+    }
+    self.next_tok();
+    //let args = vec![];
+    if let Token::Other(')') = self.cur_token {
       
     }
+    return Node::Val(1.);
   }
-  fn parse_num(num: f32) -> Node {
-    Node::Val(num)
-  }
-  fn parse_primary(&mut self) {
-    match self.cur_token{
-      _ => {eprintln!("Unknown token found when parsing expression: {:#?}", self.cur_token);}
+  fn parse_primary(&mut self) -> Node {
+    match &self.cur_token{
+      Token::Number(num) => parse_num(*num),
+      Token::Identifier(identifier) => self.parse_identifier(identifier.to_string()),
+      _ => {eprintln!("Unknown token found when parsing expression: {:#?}", self.cur_token); return Node::Val(1.0)}
     }
   }
 }
-pub fn construct_tree(mut tokens: IntoIter<Token>) -> Vec<Node> {
+pub fn construct_tree(tokens: IntoIter<Token>) -> Vec<Node> {
   let mut ast = AST::new(tokens);
   let mut nodes = vec![];
   loop {
-    let node = ast.parse_tok();
+    let node = ast.parse_primary();
     ast.next_tok();
+    println!("{:#?}", node);
     if let Node::Eof = node {
       return nodes;
     }
     nodes.push(node);
   }
 }
-/*fn match_token(cur_token: &mut Token, tokens: &mut IntoIter<Token>) -> NodeReturn {
-  match cur_token {
-      Token::Eof => NodeReturn::Eof,
-      Token::Fn => todo!(),
-      Token::Identifier(_) => todo!(),
-      Token::Number(num) => NodeReturn::Node(Node::Val(num)),
-      Token::Other(char) => {
-          if char == &mut '(' {
-
-          }
-      },
-  }
+fn parse_num(num: f32) -> Node {
+    Node::Val(num)
 }
-fn match_char(char: &mut char, tokens: &mut IntoIter<Token>) {
-    if char == &mut '(' {
-
-    }
-}
-fn parse_parenthesis(tokens: &mut IntoIter<Token>) {
-    let token = tokens.next().unwrap();
-}
-fn parse_expr() {
-
-}
-fn parse_identifier_expr(identifier: String, tokens: &mut IntoIter<Token>) -> Node{ //called when the current token is an identifier token
-    let mut token = tokens.next().unwrap(); //eat identifier
-    match token {
-        Token::Other(char) => if char != '(' {
-            return Node::Variable(identifier)
-        }
-        _ => {}
-    }
-    token = tokens.next().unwrap(); //eat (
-    let args = vec![];
-    match token {
-        Token::Other(char) => if char != ')' {
-            loop {
-                if 
-            }
-        }
-    }
-    Node::FunctionCall { name: identifier, args: () }
-}*/
 #[derive(Debug)]
 pub enum Node {
     Val(f32),
