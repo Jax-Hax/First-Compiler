@@ -1,5 +1,5 @@
 use crate::lexer::Token;
-use std::vec::IntoIter;
+use std::{vec::IntoIter, collections::HashMap};
 
 pub struct AST {
     tokens: IntoIter<Token>,
@@ -82,6 +82,29 @@ impl AST {
     }
     fn parse_expression(&mut self) -> Option<Node> {
       let lhs = self.parse_primary();
+      match lhs {
+        Node::Error(_) => return None,
+        _ => {}
+      }
+      return Some(self.parse_binary_op_rhs(0,lhs))
+    }
+    fn parse_binary_op_rhs(&mut self, expr_precendence: i32, lhs: Node) -> Node {
+      loop {
+        let tok_precedence = self.get_tok_precedence();
+      }
+    }
+    fn get_tok_precedence(&self) -> i32 {
+      let bin_ops_precendence = HashMap::from([
+        ('<', 10),
+        ('+', 20),
+        ('-', 20),
+        ('*', 40),
+      ]);
+      if let Token::Other(char) = self.cur_token {
+        let precendence = bin_ops_precendence.get(&char);
+        if precendence.is_none() {return -1} else {return *precendence.unwrap()}
+      }
+      -1
     }
     fn parse_primary(&mut self) -> Node {
         match &self.cur_token {
